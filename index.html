@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitor de Umidade - Planta</title>
+  <script src="https://cdn.jsdelivr.net/npm/mqtt@5.3.4/dist/mqtt.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eef2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      text-align: center;
+      width: 320px;
+    }
+    h2 { color: #333; margin-bottom: 20px; font-size: 1.4rem; }
+    .display-umidade {
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: #2e7d32;
+      margin: 10px 0;
+    }
+    .status-conexao {
+      font-size: 0.85rem;
+      color: #777;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Umidade do Solo</h2>
+    <div class="display-umidade"><span id="val-umidade">--</span>%</div>
+    <div class="status-conexao" id="status-mqtt">Conectando ao Adafruit IO...</div>
+  </div>
+
+  <script>
+    // --- PREENCHA COM SEUS DADOS DA ADAFRUIT IO ---
+    const username = 'Carlos23_13341124';
+    const key = 'aio_RjTm523Dduv98ohxZ4omupgLMCyY';
+    const feedName = 'umidade';
+
+    // O Adafruit IO usa a porta 443 para WebSockets seguros com MQTT
+    const host = 'wss://io.adafruit.com:443';
+    const topic = `${username}/feeds/${feedName}`;
+
+    const options = {
+      username: username,
+      password: key,
+      clientId: 'Web_Client_' + Math.random().toString(16).substring(2, 10)
+    };
+
+    const statusEl = document.getElementById('status-mqtt');
+    const umidadeEl = document.getElementById('val-umidade');
+
+    console.log('--- Conectando ao Adafruit IO via WSS ---');
+    const client = mqtt.connect(host, options);
+
+    client.on('connect', () => {
+      console.log('✅ Conectado ao Adafruit IO!');
+      statusEl.innerText = '● Conectado em tempo real';
+      statusEl.style.color = '#2e7d32';
+
+      client.subscribe(topic, (err) => {
+        if (!err) {
+          console.log(`✅ Inscrito no feed: ${topic}`);
+        }
+      });
+    });
+
+    client.on('message', (t, message) => {
+      const valorStr = message.toString();
+      console.log('📩 Novo valor de umidade recebido:', valorStr);
+      umidadeEl.innerText = valorStr;
+    });
+
+    client.on('error', (err) => {
+      console.error('❌ Erro MQTT:', err);
+      statusEl.innerText = 'Erro na Conexão';
+      statusEl.style.color = '#d32f2f';
+    });
+  </script>
+</body>
+</html>
