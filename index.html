@@ -1,58 +1,275 @@
-<script>
-  // Tenta pegar as credenciais salvas no navegador
-  let username = localStorage.getItem('aio_username');
-  let key = localStorage.getItem('aio_key');
-
-  // Se não estiverem salvas, pede ao usuário
-  if (!username || !key) {
-    username = prompt("Digite seu Adafruit IO Username:");
-    key = prompt("Digite sua Adafruit IO Key:");
-
-    if (username && key) {
-      localStorage.setItem('aio_username', username);
-      localStorage.setItem('aio_key', key);
-    } else {
-      alert("É necessário preencher as credenciais para conectar!");
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitor de Umidade - Planta</title>
+  <script src="https://cdn.jsdelivr.net/npm/mqtt@5.3.4/dist/mqtt.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-  }
 
-  const feedName = 'umidade';
-  const host = 'wss://io.adafruit.com:443';
-  const topic = `${username}/feeds/${feedName}`;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eef2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-  const options = {
-    username: username,
-    password: key,
-    clientId: 'Web_Client_' + Math.random().toString(16).substring(2, 10)
-  };
+    /* CARD PRINCIPAL */
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      text-align: center;
+      width: 340px;
+      position: relative;
+    }
 
-  const statusEl = document.getElementById('status-mqtt');
-  const umidadeEl = document.getElementById('val-umidade');
+    .btn-config {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
 
-  console.log('--- Conectando ao Adafruit IO via WSS ---');
-  const client = mqtt.connect(host, options);
+    .btn-config:hover {
+      opacity: 1.0;
+    }
 
-  client.on('connect', () => {
-    console.log('✅ Conectado ao Adafruit IO!');
-    statusEl.innerText = '● Conectado em tempo real';
-    statusEl.style.color = '#2e7d32';
+    h2 {
+      color: #333;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+    }
 
-    client.subscribe(topic, (err) => {
-      if (!err) {
-        console.log(`✅ Inscrito no feed: ${topic}`);
+    .display-umidade {
+      font-size: 4rem;
+      font-weight: 700;
+      color: #2e7d32;
+      margin: 10px 0;
+    }
+
+    .status-conexao {
+      font-size: 0.85rem;
+      color: #777;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+
+    /* MODAL DE CONFIGURAÇÕES */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      width: 320px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      text-align: left;
+    }
+
+    .modal-content h3 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
+      border-color: #2e7d32;
+    }
+
+    .btn-salvar {
+      width: 100%;
+      padding: 12px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-salvar:hover {
+      background-color: #1b5e20;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CARD DO MONITOR -->
+  <div class="card">
+    <button class="btn-config" id="open-config" title="Configurar Credenciais">⚙️</button>
+    <h2>Umidade do Solo</h2>
+    <div class="display-umidade"><span id="val-umidade">--</span>%</div>
+    <div class="status-conexao" id="status-mqtt">Aguardando credenciais...</div>
+  </div>
+
+  <!-- MODAL DE CONFIGURAÇÃO DAS CREDENCIAIS -->
+  <div class="modal-overlay" id="modal-config">
+    <div class="modal-content">
+      <h3>Configurar Adafruit IO</h3>
+      <div class="input-group">
+        <label for="input-username">Adafruit IO Username</label>
+        <input type="text" id="input-username" placeholder="ex: seu_usuario">
+      </div>
+      <div class="input-group">
+        <label for="input-key">Adafruit IO Key</label>
+        <input type="password" id="input-key" placeholder="aio_...">
+      </div>
+      <button class="btn-salvar" id="btn-salvar-config">Salvar e Conectar</button>
+    </div>
+  </div>
+
+  <script>
+    let client = null;
+    const feedName = 'umidade';
+    const host = 'wss://io.adafruit.com:443';
+
+    // Elementos da Interface
+    const statusEl = document.getElementById('status-mqtt');
+    const umidadeEl = document.getElementById('val-umidade');
+    const modalEl = document.getElementById('modal-config');
+    const inputUsername = document.getElementById('input-username');
+    const inputKey = document.getElementById('input-key');
+    const btnSalvar = document.getElementById('btn-salvar-config');
+    const btnOpenConfig = document.getElementById('open-config');
+
+    // Abre/Fecha Modal
+    btnOpenConfig.addEventListener('click', () => abrirModal());
+
+    function abrirModal() {
+      inputUsername.value = localStorage.getItem('aio_username') || '';
+      inputKey.value = localStorage.getItem('aio_key') || '';
+      modalEl.classList.add('active');
+    }
+
+    function fecharModal() {
+      modalEl.classList.remove('active');
+    }
+
+    // Ação do Botão Salvar
+    btnSalvar.addEventListener('click', () => {
+      const u = inputUsername.value.trim();
+      const k = inputKey.value.trim();
+
+      if (u && k) {
+        localStorage.setItem('aio_username', u);
+        localStorage.setItem('aio_key', k);
+        fecharModal();
+        conectarMQTT(u, k);
+      } else {
+        alert("Preencha ambos os campos!");
       }
     });
-  });
 
-  client.on('message', (t, message) => {
-    const valorStr = message.toString();
-    console.log('📩 Novo valor de umidade recebido:', valorStr);
-    umidadeEl.innerText = valorStr;
-  });
+    // Função de Conexão MQTT
+    function conectarMQTT(username, key) {
+      if (client) {
+        client.end(true); // Desconecta cliente antigo se existir
+      }
 
-  client.on('error', (err) => {
-    console.error('❌ Erro MQTT:', err);
-    statusEl.innerText = 'Erro na Conexão / Credenciais Inválidas';
-    statusEl.style.color = '#d32f2f';
-  });
-</script>
+      statusEl.innerText = 'Conectando ao Adafruit IO...';
+      statusEl.style.color = '#777';
+
+      const topic = `${username}/feeds/${feedName}`;
+      const options = {
+        username: username,
+        password: key,
+        clientId: 'Web_Client_' + Math.random().toString(16).substring(2, 10)
+      };
+
+      console.log('--- Iniciando conexão com Adafruit IO ---');
+      client = mqtt.connect(host, options);
+
+      client.on('connect', () => {
+        console.log('✅ Conectado com Sucesso!');
+        statusEl.innerText = '● Conectado em tempo real';
+        statusEl.style.color = '#2e7d32';
+
+        client.subscribe(topic, (err) => {
+          if (!err) {
+            console.log(`✅ Inscrito no feed: ${topic}`);
+          }
+        });
+      });
+
+      client.on('message', (t, message) => {
+        const valorStr = message.toString();
+        console.log('📩 Novo valor recebido:', valorStr);
+        umidadeEl.innerText = valorStr;
+      });
+
+      client.on('error', (err) => {
+        console.error('❌ Erro MQTT:', err);
+        statusEl.innerText = 'Erro na Conexão / Chave Inválida';
+        statusEl.style.color = '#d32f2f';
+      });
+    }
+
+    // --- INICIALIZAÇÃO DA PÁGINA ---
+    const savedUsername = localStorage.getItem('aio_username');
+    const savedKey = localStorage.getItem('aio_key');
+
+    if (savedUsername && savedKey) {
+      conectarMQTT(savedUsername, savedKey);
+    } else {
+      abrirModal();
+    }
+  </script>
+</body>
+</html>
