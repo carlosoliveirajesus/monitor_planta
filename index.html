@@ -2,167 +2,371 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monitor de Umidade - Planta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GreenTech - Monitor</title>
   <script src="https://cdn.jsdelivr.net/npm/mqtt@5.3.4/dist/mqtt.min.js"></script>
   <style>
+    :root {
+      --bg-dark: #0a1f16;
+      --card-light: #e3ede3;
+      --card-white: #f4f7f4;
+      --text-dark: #1b2e23;
+      --accent-purple: #6c5ce7;
+      --accent-green: #2e7d32;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #eef2f5;
+      background-color: var(--bg-dark);
+      color: white;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       min-height: 100vh;
+      padding-bottom: 80px; /* Espaço para a barra inferior */
     }
 
-    /* CARD PRINCIPAL */
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      text-align: center;
-      width: 340px;
-      position: relative;
+    /* CONTAINER ESTILO MOBILE */
+    .app-container {
+      width: 100%;
+      max-width: 414px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
 
-    .btn-config {
-      position: absolute;
-      top: 15px;
-      right: 15px;
+    /* HEADER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-size: 1.1rem;
+    }
+
+    .header-actions button {
       background: none;
       border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      opacity: 0.6;
-      transition: opacity 0.2s;
-    }
-
-    .btn-config:hover {
-      opacity: 1.0;
-    }
-
-    h2 {
-      color: #333;
+      color: white;
       font-size: 1.3rem;
-      margin-bottom: 15px;
+      cursor: pointer;
+      opacity: 0.8;
+      margin-left: 10px;
     }
 
-    .display-umidade {
-      font-size: 4rem;
+    /* SAUDAÇÃO */
+    .greeting h1 {
+      font-size: 1.5rem;
       font-weight: 700;
-      color: #2e7d32;
-      margin: 10px 0;
+      margin-top: 5px;
     }
-
-    .status-conexao {
+    .greeting p {
       font-size: 0.85rem;
-      color: #777;
-      margin-top: 15px;
-      font-weight: 500;
+      opacity: 0.7;
+      margin-top: 2px;
     }
 
-    /* MODAL DE CONFIGURAÇÕES */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(4px);
+    /* CARD DA PLANTA PRINCIPAL */
+    .plant-card {
+      background-color: var(--card-light);
+      color: var(--text-dark);
+      border-radius: 20px;
+      padding: 16px;
       display: flex;
-      justify-content: center;
+      gap: 15px;
       align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
     }
 
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
+    .plant-img {
+      width: 90px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 12px;
     }
 
-    .modal-content {
-      background: white;
-      padding: 25px;
-      border-radius: 16px;
-      width: 320px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-      text-align: left;
+    .plant-info h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
     }
 
-    .modal-content h3 {
-      font-size: 1.1rem;
-      color: #333;
-      margin-bottom: 15px;
-    }
-
-    .input-group {
-      margin-bottom: 15px;
-    }
-
-    .input-group label {
-      display: block;
+    .plant-info .scientific {
       font-size: 0.8rem;
-      color: #666;
-      margin-bottom: 5px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background-color: #d4e8d4;
+      color: #2b5c2b;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
       font-weight: 600;
     }
 
+    /* SEÇÃO VISÃO GERAL (CARD BRANCO GRANDE) */
+    .overview-section {
+      background-color: var(--card-white);
+      color: var(--text-dark);
+      border-radius: 24px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .overview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .overview-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .overview-header span {
+      font-size: 0.75rem;
+      color: #777;
+    }
+
+    .grid-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .metric-card {
+      background: white;
+      border-radius: 16px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 110px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .metric-title {
+      font-size: 0.75rem;
+      color: #666;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent-purple);
+      margin: 8px 0 2px 0;
+    }
+
+    .metric-subtitle {
+      font-size: 0.75rem;
+      color: #888;
+    }
+
+    /* CARD SAÚDE FULL WIDTH */
+    .health-card {
+      background: white;
+      border-radius: 16px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .health-info h4 {
+      font-size: 1rem;
+      color: #2e7d32;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .health-info p {
+      font-size: 0.75rem;
+      color: #777;
+    }
+
+    /* BARRA DE NAVEGAÇÃO INFERIOR */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+      max-width: 414px;
+      margin: 0 auto;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #888;
+      text-decoration: none;
+      gap: 3px;
+    }
+
+    .nav-item.active {
+      color: var(--accent-purple);
+      font-weight: 600;
+    }
+
+    .nav-icon {
+      font-size: 1.2rem;
+    }
+
+    /* MODAL CONFIGURACAO */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(5px);
+      display: flex; justify-content: center; align-items: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+      z-index: 999;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-content {
+      background: white; color: #333; padding: 25px; border-radius: 20px; width: 320px;
+    }
+    .input-group { margin-bottom: 12px; }
+    .input-group label { display: block; font-size: 0.8rem; color: #555; margin-bottom: 4px; }
     .input-group input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.2s;
+      width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem;
     }
-
-    .input-group input:focus {
-      border-color: #2e7d32;
-    }
-
     .btn-salvar {
-      width: 100%;
-      padding: 12px;
-      background-color: #2e7d32;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .btn-salvar:hover {
-      background-color: #1b5e20;
+      width: 100%; padding: 12px; background: var(--bg-dark); color: white; border: none;
+      border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 8px;
     }
   </style>
 </head>
 <body>
 
-  <!-- CARD DO MONITOR -->
-  <div class="card">
-    <button class="btn-config" id="open-config" title="Configurar Credenciais">⚙️</button>
-    <h2>Umidade do Solo</h2>
-    <div class="display-umidade"><span id="val-umidade">--</span>%</div>
-    <div class="status-conexao" id="status-mqtt">Aguardando credenciais...</div>
+  <div class="app-container">
+    
+    <!-- HEADER -->
+    <div class="header">
+      <div class="brand">
+        <span>🍃</span> GREENTECH
+      </div>
+      <div class="header-actions">
+        <button id="open-config" title="Configurações">⚙️</button>
+      </div>
+    </div>
+
+    <!-- SAUDAÇÃO -->
+    <div class="greeting">
+      <h1>Olá, Carlos!</h1>
+      <p>Seu jardim está sob controle.</p>
+    </div>
+
+    <!-- CARD DA PLANTA -->
+    <div class="plant-card">
+      <img src="https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=300&q=80" alt="Jiboia" class="plant-img">
+      <div class="plant-info">
+        <h3>Jiboia</h3>
+        <p class="scientific">Epipremnum aureum</p>
+        <div class="badge-status">
+          <span>🍃</span> Saudável
+        </div>
+      </div>
+    </div>
+
+    <!-- VISÃO GERAL -->
+    <div class="overview-section">
+      <div class="overview-header">
+        <h2>Visão Geral</h2>
+        <span id="status-mqtt">Atualizado agora</span>
+      </div>
+
+      <div class="grid-metrics">
+        <!-- METRICA UMIDADE (REAL-TIME) -->
+        <div class="metric-card">
+          <div class="metric-title">
+            💧 Umidade do Solo
+          </div>
+          <div class="metric-value"><span id="val-umidade">--</span>%</div>
+          <div class="metric-subtitle" id="status-umidade">Aguardando...</div>
+        </div>
+
+        <!-- METRICA IRRIGAÇÃO -->
+        <div class="metric-card">
+          <div class="metric-title">
+            📅 Irrigação
+          </div>
+          <div class="metric-value" style="color: #333; font-size: 1.4rem; margin-top: 14px;">A cada 2 dias</div>
+          <div class="metric-subtitle">Programado</div>
+        </div>
+      </div>
+
+      <!-- CARD SAÚDE DA PLANTA -->
+      <div class="health-card">
+        <div class="health-info">
+          <div class="metric-title">🪴 Saúde da Planta</div>
+          <h4>Ótima</h4>
+          <p>Planta saudável e forte</p>
+        </div>
+        <div style="font-size: 1.8rem;">🌿</div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- MODAL DE CONFIGURAÇÃO DAS CREDENCIAIS -->
+  <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+  <div class="bottom-nav">
+    <a href="#" class="nav-item active">
+      <span class="nav-icon">🏠</span>
+      <span>Início</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">🪴</span>
+      <span>Plantas</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">💧</span>
+      <span>Irrigação</span>
+    </a>
+    <a href="#" class="nav-item">
+      <span class="nav-icon">👤</span>
+      <span>Perfil</span>
+    </a>
+  </div>
+
+  <!-- MODAL DE CONFIGURAÇÃO -->
   <div class="modal-overlay" id="modal-config">
     <div class="modal-content">
-      <h3>Configurar Adafruit IO</h3>
+      <h3 style="margin-bottom: 15px;">Configurar Adafruit IO</h3>
       <div class="input-group">
         <label for="input-username">Adafruit IO Username</label>
         <input type="text" id="input-username" placeholder="ex: seu_usuario">
@@ -180,16 +384,16 @@
     const feedName = 'umidade';
     const host = 'wss://io.adafruit.com:443';
 
-    // Elementos da Interface
+    // Elementos do DOM
     const statusEl = document.getElementById('status-mqtt');
     const umidadeEl = document.getElementById('val-umidade');
+    const statusUmidadeEl = document.getElementById('status-umidade');
     const modalEl = document.getElementById('modal-config');
     const inputUsername = document.getElementById('input-username');
     const inputKey = document.getElementById('input-key');
     const btnSalvar = document.getElementById('btn-salvar-config');
     const btnOpenConfig = document.getElementById('open-config');
 
-    // Abre/Fecha Modal
     btnOpenConfig.addEventListener('click', () => abrirModal());
 
     function abrirModal() {
@@ -202,7 +406,6 @@
       modalEl.classList.remove('active');
     }
 
-    // Ação do Botão Salvar
     btnSalvar.addEventListener('click', () => {
       const u = inputUsername.value.trim();
       const k = inputKey.value.trim();
@@ -217,14 +420,10 @@
       }
     });
 
-    // Função de Conexão MQTT
     function conectarMQTT(username, key) {
-      if (client) {
-        client.end(true); // Desconecta cliente antigo se existir
-      }
+      if (client) client.end(true);
 
-      statusEl.innerText = 'Conectando ao Adafruit IO...';
-      statusEl.style.color = '#777';
+      statusEl.innerText = 'Conectando...';
 
       const topic = `${username}/feeds/${feedName}`;
       const options = {
@@ -233,35 +432,41 @@
         clientId: 'Web_Client_' + Math.random().toString(16).substring(2, 10)
       };
 
-      console.log('--- Iniciando conexão com Adafruit IO ---');
       client = mqtt.connect(host, options);
 
       client.on('connect', () => {
-        console.log('✅ Conectado com Sucesso!');
-        statusEl.innerText = '● Conectado em tempo real';
+        statusEl.innerText = 'Online';
         statusEl.style.color = '#2e7d32';
 
         client.subscribe(topic, (err) => {
-          if (!err) {
-            console.log(`✅ Inscrito no feed: ${topic}`);
-          }
+          if (!err) console.log(`Inscrito em: ${topic}`);
         });
       });
 
       client.on('message', (t, message) => {
-        const valorStr = message.toString();
-        console.log('📩 Novo valor recebido:', valorStr);
-        umidadeEl.innerText = valorStr;
+        const val = parseInt(message.toString());
+        umidadeEl.innerText = val;
+
+        // Classificação do Status
+        if (val < 30) {
+          statusUmidadeEl.innerText = 'Seco (Regar)';
+          statusUmidadeEl.style.color = '#d32f2f';
+        } else if (val <= 70) {
+          statusUmidadeEl.innerText = 'Ideal';
+          statusUmidadeEl.style.color = '#2e7d32';
+        } else {
+          statusUmidadeEl.innerText = 'Muito Úmido';
+          statusUmidadeEl.style.color = '#0288d1';
+        }
       });
 
-      client.on('error', (err) => {
-        console.error('❌ Erro MQTT:', err);
-        statusEl.innerText = 'Erro na Conexão / Chave Inválida';
+      client.on('error', () => {
+        statusEl.innerText = 'Erro de Conexão';
         statusEl.style.color = '#d32f2f';
       });
     }
 
-    // --- INICIALIZAÇÃO DA PÁGINA ---
+    // Inicialização
     const savedUsername = localStorage.getItem('aio_username');
     const savedKey = localStorage.getItem('aio_key');
 
