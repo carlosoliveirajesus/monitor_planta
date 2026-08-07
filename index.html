@@ -29,7 +29,7 @@
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
-      padding-bottom: 80px; /* Espaço para a barra inferior */
+      padding-bottom: 80px;
     }
 
     /* CONTAINER ESTILO MOBILE */
@@ -120,9 +120,10 @@
       border-radius: 20px;
       font-size: 0.75rem;
       font-weight: 600;
+      transition: all 0.3s ease;
     }
 
-    /* SEÇÃO VISÃO GERAL (CARD BRANCO GRANDE) */
+    /* SEÇÃO VISÃO GERAL */
     .overview-section {
       background-color: var(--card-white);
       color: var(--text-dark);
@@ -185,9 +186,10 @@
     .metric-subtitle {
       font-size: 0.75rem;
       color: #888;
+      font-weight: 500;
     }
 
-    /* CARD SAÚDE FULL WIDTH */
+    /* CARD SAÚDE DINÂMICO */
     .health-card {
       background: white;
       border-radius: 16px;
@@ -196,18 +198,25 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      transition: all 0.3s ease;
     }
 
     .health-info h4 {
-      font-size: 1rem;
-      color: #2e7d32;
+      font-size: 1.1rem;
       font-weight: 700;
       margin-top: 4px;
+      transition: color 0.3s ease;
     }
 
     .health-info p {
       font-size: 0.75rem;
-      color: #777;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .health-icon {
+      font-size: 2rem;
+      transition: transform 0.3s ease;
     }
 
     /* BARRA DE NAVEGAÇÃO INFERIOR */
@@ -297,8 +306,8 @@
       <div class="plant-info">
         <h3>Jiboia</h3>
         <p class="scientific">Epipremnum aureum</p>
-        <div class="badge-status">
-          <span>🍃</span> Saudável
+        <div class="badge-status" id="badge-planta">
+          <span id="badge-icon">🍃</span> <span id="badge-text">Aguardando...</span>
         </div>
       </div>
     </div>
@@ -325,19 +334,19 @@
           <div class="metric-title">
             📅 Irrigação
           </div>
-          <div class="metric-value" style="color: #333; font-size: 1.4rem; margin-top: 14px;">A cada 2 dias</div>
+          <div class="metric-value" style="color: #333; font-size: 1.3rem; margin-top: 14px;">A cada 2 dias</div>
           <div class="metric-subtitle">Programado</div>
         </div>
       </div>
 
-      <!-- CARD SAÚDE DA PLANTA -->
+      <!-- CARD SAÚDE DA PLANTA (DINÂMICO) -->
       <div class="health-card">
         <div class="health-info">
           <div class="metric-title">🪴 Saúde da Planta</div>
-          <h4>Ótima</h4>
-          <p>Planta saudável e forte</p>
+          <h4 id="health-title">Calculando...</h4>
+          <p id="health-desc">Aguardando dados do sensor...</p>
         </div>
-        <div style="font-size: 1.8rem;">🌿</div>
+        <div class="health-icon" id="health-icon">🌿</div>
       </div>
     </div>
 
@@ -388,6 +397,15 @@
     const statusEl = document.getElementById('status-mqtt');
     const umidadeEl = document.getElementById('val-umidade');
     const statusUmidadeEl = document.getElementById('status-umidade');
+    
+    // Elementos da Saúde da Planta
+    const healthTitle = document.getElementById('health-title');
+    const healthDesc = document.getElementById('health-desc');
+    const healthIcon = document.getElementById('health-icon');
+    const badgePlanta = document.getElementById('badge-planta');
+    const badgeText = document.getElementById('badge-text');
+    const badgeIcon = document.getElementById('badge-icon');
+
     const modalEl = document.getElementById('modal-config');
     const inputUsername = document.getElementById('input-username');
     const inputKey = document.getElementById('input-key');
@@ -420,6 +438,85 @@
       }
     });
 
+    // Função que atualiza a saúde da planta com base na umidade
+    function atualizarSaudeDaPlanta(val) {
+      if (val < 20) {
+        // MUITO SECO
+        statusUmidadeEl.innerText = 'Muito Seco';
+        statusUmidadeEl.style.color = '#d32f2f';
+
+        healthTitle.innerText = 'Crítica';
+        healthTitle.style.color = '#d32f2f';
+        healthDesc.innerText = 'Solo muito seco! Regue imediatamente.';
+        healthIcon.innerText = '🥀';
+
+        badgeText.innerText = 'Precisa de Água';
+        badgeIcon.innerText = '⚠️';
+        badgePlanta.style.backgroundColor = '#fde8e8';
+        badgePlanta.style.color = '#9c1c1c';
+
+      } else if (val < 35) {
+        // SECO
+        statusUmidadeEl.innerText = 'Seco';
+        statusUmidadeEl.style.color = '#e67e22';
+
+        healthTitle.innerText = 'Atenção';
+        healthTitle.style.color = '#e67e22';
+        healthDesc.innerText = 'Umidade baixa. Considere irrigar em breve.';
+        healthIcon.innerText = '🍂';
+
+        badgeText.innerText = 'Umidade Baixa';
+        badgeIcon.innerText = '🍂';
+        badgePlanta.style.backgroundColor = '#fef5e7';
+        badgePlanta.style.color = '#b7950b';
+
+      } else if (val <= 70) {
+        // IDEAL
+        statusUmidadeEl.innerText = 'Ideal';
+        statusUmidadeEl.style.color = '#2e7d32';
+
+        healthTitle.innerText = 'Ótima';
+        healthTitle.style.color = '#2e7d32';
+        healthDesc.innerText = 'Planta saudável e bem hidratada!';
+        healthIcon.innerText = '🌿';
+
+        badgeText.innerText = 'Saudável';
+        badgeIcon.innerText = '🍃';
+        badgePlanta.style.backgroundColor = '#d4e8d4';
+        badgePlanta.style.color = '#2b5c2b';
+
+      } else if (val <= 85) {
+        // ÚMIDO
+        statusUmidadeEl.innerText = 'Úmido';
+        statusUmidadeEl.style.color = '#0288d1';
+
+        healthTitle.innerText = 'Boa';
+        healthTitle.style.color = '#0288d1';
+        healthDesc.innerText = 'Solo bem hidratado. Não precisa regar.';
+        healthIcon.innerText = '💧';
+
+        badgeText.innerText = 'Hidratada';
+        badgeIcon.innerText = '💧';
+        badgePlanta.style.backgroundColor = '#e1f5fe';
+        badgePlanta.style.color = '#0277bd';
+
+      } else {
+        // ENCHARCADO
+        statusUmidadeEl.innerText = 'Encharcado';
+        statusUmidadeEl.style.color = '#7b1fa2';
+
+        healthTitle.innerText = 'Excesso de Água';
+        healthTitle.style.color = '#7b1fa2';
+        healthDesc.innerText = 'Solo muito molhado. Risco de apodrecer raízes.';
+        healthIcon.innerText = '🌊';
+
+        badgeText.innerText = 'Excesso de Água';
+        badgeIcon.innerText = '🌊';
+        badgePlanta.style.backgroundColor = '#f3e5f5';
+        badgePlanta.style.color = '#4a148c';
+      }
+    }
+
     function conectarMQTT(username, key) {
       if (client) client.end(true);
 
@@ -447,17 +544,8 @@
         const val = parseInt(message.toString());
         umidadeEl.innerText = val;
 
-        // Classificação do Status
-        if (val < 30) {
-          statusUmidadeEl.innerText = 'Seco (Regar)';
-          statusUmidadeEl.style.color = '#d32f2f';
-        } else if (val <= 70) {
-          statusUmidadeEl.innerText = 'Ideal';
-          statusUmidadeEl.style.color = '#2e7d32';
-        } else {
-          statusUmidadeEl.innerText = 'Muito Úmido';
-          statusUmidadeEl.style.color = '#0288d1';
-        }
+        // Atualiza a Saúde da Planta dinamicamente
+        atualizarSaudeDaPlanta(val);
       });
 
       client.on('error', () => {
