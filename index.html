@@ -296,7 +296,7 @@
 
     <!-- SAUDAÇÃO -->
     <div class="greeting">
-      <h1>Olá, Maria Eduarda!</h1>
+      <h1>Olá, <span id="greeting-name">Usuário</span>!</h1>
       <p>Seu jardim está sob controle.</p>
     </div>
 
@@ -375,7 +375,11 @@
   <!-- MODAL DE CONFIGURAÇÃO -->
   <div class="modal-overlay" id="modal-config">
     <div class="modal-content">
-      <h3 style="margin-bottom: 15px;">Configurar Adafruit IO</h3>
+      <h3 style="margin-bottom: 15px;">Configurações do Perfil</h3>
+      <div class="input-group">
+        <label for="input-name">Seu Nome</label>
+        <input type="text" id="input-name" placeholder="ex: Carlos, Maria, João...">
+      </div>
       <div class="input-group">
         <label for="input-username">Adafruit IO Username</label>
         <input type="text" id="input-username" placeholder="ex: seu_usuario">
@@ -397,6 +401,7 @@
     const statusEl = document.getElementById('status-mqtt');
     const umidadeEl = document.getElementById('val-umidade');
     const statusUmidadeEl = document.getElementById('status-umidade');
+    const greetingName = document.getElementById('greeting-name');
     
     // Elementos da Saúde da Planta
     const healthTitle = document.getElementById('health-title');
@@ -406,7 +411,9 @@
     const badgeText = document.getElementById('badge-text');
     const badgeIcon = document.getElementById('badge-icon');
 
+    // Elementos do Modal
     const modalEl = document.getElementById('modal-config');
+    const inputName = document.getElementById('input-name');
     const inputUsername = document.getElementById('input-username');
     const inputKey = document.getElementById('input-key');
     const btnSalvar = document.getElementById('btn-salvar-config');
@@ -415,6 +422,7 @@
     btnOpenConfig.addEventListener('click', () => abrirModal());
 
     function abrirModal() {
+      inputName.value = localStorage.getItem('aio_user_name') || 'Carlos';
       inputUsername.value = localStorage.getItem('aio_username') || '';
       inputKey.value = localStorage.getItem('aio_key') || '';
       modalEl.classList.add('active');
@@ -425,23 +433,26 @@
     }
 
     btnSalvar.addEventListener('click', () => {
+      const name = inputName.value.trim() || 'Usuário';
       const u = inputUsername.value.trim();
       const k = inputKey.value.trim();
 
       if (u && k) {
+        localStorage.setItem('aio_user_name', name);
         localStorage.setItem('aio_username', u);
         localStorage.setItem('aio_key', k);
+        
+        greetingName.innerText = name;
         fecharModal();
         conectarMQTT(u, k);
       } else {
-        alert("Preencha ambos os campos!");
+        alert("Preencha o Username e a Key do Adafruit IO!");
       }
     });
 
     // Função que atualiza a saúde da planta com base na umidade
     function atualizarSaudeDaPlanta(val) {
       if (val < 20) {
-        // MUITO SECO
         statusUmidadeEl.innerText = 'Muito Seco';
         statusUmidadeEl.style.color = '#d32f2f';
 
@@ -456,7 +467,6 @@
         badgePlanta.style.color = '#9c1c1c';
 
       } else if (val < 35) {
-        // SECO
         statusUmidadeEl.innerText = 'Seco';
         statusUmidadeEl.style.color = '#e67e22';
 
@@ -471,7 +481,6 @@
         badgePlanta.style.color = '#b7950b';
 
       } else if (val <= 70) {
-        // IDEAL
         statusUmidadeEl.innerText = 'Ideal';
         statusUmidadeEl.style.color = '#2e7d32';
 
@@ -486,7 +495,6 @@
         badgePlanta.style.color = '#2b5c2b';
 
       } else if (val <= 85) {
-        // ÚMIDO
         statusUmidadeEl.innerText = 'Úmido';
         statusUmidadeEl.style.color = '#0288d1';
 
@@ -501,7 +509,6 @@
         badgePlanta.style.color = '#0277bd';
 
       } else {
-        // ENCHARCADO
         statusUmidadeEl.innerText = 'Encharcado';
         statusUmidadeEl.style.color = '#7b1fa2';
 
@@ -543,8 +550,6 @@
       client.on('message', (t, message) => {
         const val = parseInt(message.toString());
         umidadeEl.innerText = val;
-
-        // Atualiza a Saúde da Planta dinamicamente
         atualizarSaudeDaPlanta(val);
       });
 
@@ -554,7 +559,10 @@
       });
     }
 
-    // Inicialização
+    // Inicialização da Página
+    const savedName = localStorage.getItem('aio_user_name') || 'Carlos';
+    greetingName.innerText = savedName;
+
     const savedUsername = localStorage.getItem('aio_username');
     const savedKey = localStorage.getItem('aio_key');
 
