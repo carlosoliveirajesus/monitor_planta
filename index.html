@@ -9,18 +9,16 @@
     :root {
       --bg-dark: #0a1f16;
       --card-light: #e3ede3;
-      --card-white: #f4f7f4;
+      --card-white: #eef4ee;
       --text-dark: #1b2e23;
-      --accent-purple: #6c5ce7;
+      --text-muted: #5f6f64;
       --accent-green: #2e7d32;
+      --accent-soft: #d4e8d4;
+      --track: #e2e6e2;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
 
     body {
       background-color: var(--bg-dark);
@@ -29,10 +27,9 @@
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
-      padding-bottom: 80px;
+      padding-bottom: 90px;
     }
 
-    /* CONTAINER ESTILO MOBILE */
     .app-container {
       width: 100%;
       max-width: 414px;
@@ -43,87 +40,68 @@
     }
 
     /* HEADER */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      font-size: 1.1rem;
-    }
-
+    .header { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: 1px; font-size: 1.15rem; }
     .header-actions button {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.3rem;
-      cursor: pointer;
-      opacity: 0.8;
-      margin-left: 10px;
+      background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; opacity: 0.85;
     }
 
     /* SAUDAÇÃO */
-    .greeting h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-top: 5px;
-    }
-    .greeting p {
-      font-size: 0.85rem;
-      opacity: 0.7;
-      margin-top: 2px;
-    }
+    .greeting h1 { font-size: 1.7rem; font-weight: 800; margin-top: 4px; }
+    .greeting p { font-size: 0.9rem; opacity: 0.75; margin-top: 2px; }
 
-    /* CARD DA PLANTA PRINCIPAL */
+    /* CARD DA PLANTA */
     .plant-card {
       background-color: var(--card-light);
       color: var(--text-dark);
-      border-radius: 20px;
-      padding: 16px;
+      border-radius: 22px;
+      padding: 14px;
       display: flex;
       gap: 15px;
       align-items: center;
+      cursor: pointer;
+      position: relative;
+      border: none;
+      text-align: left;
+      width: 100%;
+      transition: transform 0.15s ease;
     }
+    .plant-card:active { transform: scale(0.98); }
 
-    .plant-img {
-      width: 90px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 12px;
+    .plant-thumb {
+      width: 100px; height: 108px; flex-shrink: 0;
+      border-radius: 14px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+      background: linear-gradient(160deg, #f7faf7, #cfe3cf);
     }
+    .plant-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    .plant-info h3 {
-      font-size: 1.2rem;
-      font-weight: 700;
-    }
-
-    .plant-info .scientific {
-      font-size: 0.8rem;
-      color: #555;
-      margin-bottom: 8px;
-    }
+    .plant-info { flex: 1; min-width: 0; }
+    .plant-info h3 { font-size: 1.35rem; font-weight: 800; line-height: 1.1; }
+    .plant-info .scientific { font-size: 0.85rem; color: var(--text-muted); font-style: italic; margin: 3px 0 6px; }
+    .plant-info .divider { width: 28px; height: 3px; border-radius: 3px; background: var(--accent-green); margin-bottom: 6px; }
+    .plant-info .desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 8px; }
 
     .badge-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background-color: #d4e8d4;
-      color: #2b5c2b;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      display: inline-flex; align-items: center; gap: 5px;
+      background-color: var(--accent-soft); color: #2b5c2b;
+      padding: 5px 12px; border-radius: 20px;
+      font-size: 0.78rem; font-weight: 700;
       transition: all 0.3s ease;
     }
 
-    /* SEÇÃO VISÃO GERAL */
+    .plant-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .plant-info h3 { overflow-wrap: anywhere; }
+    .swap-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: white; color: var(--accent-green);
+      border-radius: 20px; padding: 4px 10px;
+      font-size: 0.72rem; font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* VISÃO GERAL */
     .overview-section {
       background-color: var(--card-white);
       color: var(--text-dark);
@@ -131,149 +109,138 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 14px;
     }
+    .overview-header { display: flex; justify-content: space-between; align-items: center; }
+    .overview-header h2 { font-size: 1.3rem; font-weight: 800; }
+    .conn-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #777; font-weight: 500; }
+    .conn-status svg { width: 18px; height: 18px; }
 
-    .overview-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .overview-header h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    .overview-header span {
-      font-size: 0.75rem;
-      color: #777;
-    }
-
-    .grid-metrics {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+    .grid-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
     .metric-card {
-      background: white;
-      border-radius: 16px;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 110px;
+      background: white; border-radius: 18px; padding: 15px;
+      display: flex; flex-direction: column; gap: 6px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
+    .metric-title { font-size: 0.8rem; color: #555; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .metric-value { font-size: 2.1rem; font-weight: 800; color: var(--text-dark); line-height: 1.1; }
+    .metric-value.small { font-size: 1.15rem; margin-top: 6px; }
+    .metric-subtitle { font-size: 0.75rem; color: #777; line-height: 1.4; }
 
-    .metric-title {
-      font-size: 0.75rem;
-      color: #666;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .progress { height: 9px; border-radius: 9px; background: var(--track); overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; border-radius: 9px; background: var(--accent-green); transition: width 0.5s ease, background 0.3s ease; }
 
-    .metric-value {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--accent-purple);
-      margin: 8px 0 2px 0;
-    }
-
-    .metric-subtitle {
-      font-size: 0.75rem;
-      color: #888;
-      font-weight: 500;
-    }
-
-    /* CARD SAÚDE DINÂMICO */
-    .health-card {
-      background: white;
-      border-radius: 16px;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .wide-card {
+      background: white; border-radius: 18px; padding: 15px 16px;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-      transition: all 0.3s ease;
+    }
+    .wide-card h4 { font-size: 1.25rem; font-weight: 800; margin-top: 4px; transition: color 0.3s ease; }
+    .wide-card p { font-size: 0.8rem; color: #666; margin-top: 3px; line-height: 1.4; }
+    .wide-icon { font-size: 2.6rem; flex-shrink: 0; }
+
+    .info-box {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: #e1eee1; border-radius: 14px; padding: 12px 14px;
+      font-size: 0.76rem; color: #3b4d40; line-height: 1.45;
+    }
+.info-box .credito { display: block; margin-top: 6px; font-size: 0.66rem; opacity: 0.7; }
+    .info-box .i {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid var(--accent-green); color: var(--accent-green);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.75rem; font-style: normal;
     }
 
-    .health-info h4 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-top: 4px;
-      transition: color 0.3s ease;
-    }
-
-    .health-info p {
-      font-size: 0.75rem;
-      color: #666;
-      margin-top: 2px;
-    }
-
-    .health-icon {
-      font-size: 2rem;
-      transition: transform 0.3s ease;
-    }
-
-    /* BARRA DE NAVEGAÇÃO INFERIOR */
+    /* NAV INFERIOR */
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; display: flex; justify-content: space-around;
+      padding: 12px 0 14px;
+      border-top-left-radius: 22px; border-top-right-radius: 22px;
       box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
-      max-width: 414px;
-      margin: 0 auto;
+      max-width: 414px; margin: 0 auto; z-index: 50;
     }
-
     .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 0.7rem;
-      color: #888;
-      text-decoration: none;
-      gap: 3px;
+      display: flex; flex-direction: column; align-items: center;
+      font-size: 0.78rem; color: #888; text-decoration: none; gap: 3px;
+      background: none; border: none; cursor: pointer; position: relative; padding-bottom: 6px;
     }
-
-    .nav-item.active {
-      color: var(--accent-purple);
-      font-weight: 600;
+    .nav-item.active { color: var(--accent-green); font-weight: 700; }
+    .nav-item.active::after {
+      content: ''; position: absolute; bottom: 0; width: 22px; height: 3px; border-radius: 3px; background: var(--accent-green);
     }
+    .nav-icon { font-size: 1.4rem; }
 
-    .nav-icon {
-      font-size: 1.2rem;
+    /* SELETOR DE ESPÉCIES (BOTTOM SHEET) */
+    .sheet-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 900;
     }
+    .sheet-overlay.active { opacity: 1; pointer-events: auto; }
+    .sheet {
+      position: fixed; left: 0; right: 0; bottom: 0; margin: 0 auto;
+      max-width: 414px; max-height: 85vh;
+      background: var(--card-white); color: var(--text-dark);
+      border-top-left-radius: 26px; border-top-right-radius: 26px;
+      padding: 10px 18px 24px;
+      display: flex; flex-direction: column; gap: 12px;
+      transform: translateY(100%); transition: transform 0.3s cubic-bezier(.2,.8,.2,1);
+      z-index: 901;
+    }
+    .sheet.active { transform: translateY(0); }
+    .sheet-handle { width: 42px; height: 5px; border-radius: 5px; background: #c5cfc6; margin: 4px auto 2px; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: center; }
+    .sheet-header h2 { font-size: 1.25rem; font-weight: 800; }
+    .sheet-header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+    .sheet-close {
+      width: 34px; height: 34px; border-radius: 50%; border: none; background: white;
+      font-size: 1.1rem; cursor: pointer; color: #555; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .search {
+      width: 100%; padding: 12px 14px 12px 38px; border-radius: 14px; border: 1px solid #d6e0d7;
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23889' stroke-width='2'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E") no-repeat 13px center;
+      font-size: 0.9rem; color: var(--text-dark); outline: none;
+    }
+    .search:focus { border-color: var(--accent-green); }
+    .species-list { overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 6px; }
+    .species-item {
+      display: flex; align-items: center; gap: 12px;
+      background: white; border-radius: 18px; padding: 10px;
+      border: 2px solid transparent; cursor: pointer; text-align: left; width: 100%;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .species-item:active { transform: scale(0.98); }
+    .species-item.selected { border-color: var(--accent-green); background: #f6fbf6; }
+    .species-item .plant-thumb { width: 58px; height: 58px; border-radius: 12px; font-size: 1.9rem; }
+    .species-item .meta { flex: 1; min-width: 0; }
+    .species-item .meta strong { display: block; font-size: 1rem; color: var(--text-dark); }
+    .species-item .meta em { display: block; font-size: 0.76rem; color: var(--text-muted); }
+    .species-item .meta .chips { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+    .chip { font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #e8f1e8; color: #2b5c2b; }
+    .check {
+      width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+      border: 2px solid #cfd8d0; display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 0.8rem; font-weight: 800;
+    }
+    .species-item.selected .check { background: var(--accent-green); border-color: var(--accent-green); }
+    .empty { text-align: center; font-size: 0.85rem; color: var(--text-muted); padding: 20px 0; }
 
-    /* MODAL CONFIGURACAO */
+    /* MODAL CONFIGURAÇÃO */
     .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(5px);
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
       display: flex; justify-content: center; align-items: center;
-      opacity: 0; pointer-events: none; transition: opacity 0.3s;
-      z-index: 999;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 999;
     }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content {
-      background: white; color: #333; padding: 25px; border-radius: 20px; width: 320px;
-    }
+    .modal-content { background: white; color: #333; padding: 25px; border-radius: 20px; width: 320px; }
     .input-group { margin-bottom: 12px; }
     .input-group label { display: block; font-size: 0.8rem; color: #555; margin-bottom: 4px; }
-    .input-group input {
-      width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem;
-    }
+    .input-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.9rem; }
     .btn-salvar {
       width: 100%; padding: 12px; background: var(--bg-dark); color: white; border: none;
       border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 8px;
@@ -283,12 +250,10 @@
 <body>
 
   <div class="app-container">
-    
+
     <!-- HEADER -->
     <div class="header">
-      <div class="brand">
-        <span>🍃</span> GREENTECH
-      </div>
+      <div class="brand"><span>🍃</span> GREENTECH</div>
       <div class="header-actions">
         <button id="open-config" title="Configurações">⚙️</button>
       </div>
@@ -300,76 +265,100 @@
       <p>Seu jardim está sob controle.</p>
     </div>
 
-    <!-- CARD DA PLANTA -->
-    <div class="plant-card">
-      <img src="https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=300&q=80" alt="Jiboia" class="plant-img">
+    <!-- CARD DA PLANTA (toque para trocar a espécie) -->
+    <button class="plant-card" id="plant-card" title="Trocar espécie">
+      <div class="plant-thumb" id="plant-thumb"></div>
       <div class="plant-info">
-        <h3>Jiboia</h3>
-        <p class="scientific">Epipremnum aureum</p>
-        <div class="badge-status" id="badge-planta">
-          <span id="badge-icon">🍃</span> <span id="badge-text">Aguardando...</span>
+        <h3 id="plant-name">--</h3>
+        <p class="scientific" id="plant-scientific">--</p>
+        <div class="divider"></div>
+        <p class="desc" id="plant-desc"></p>
+        <div class="plant-actions">
+          <div class="badge-status" id="badge-planta">
+            <span id="badge-icon">🍃</span> <span id="badge-text">Aguardando...</span>
+          </div>
+          <span class="swap-btn">Trocar ⌄</span>
         </div>
       </div>
-    </div>
+    </button>
 
     <!-- VISÃO GERAL -->
     <div class="overview-section">
       <div class="overview-header">
         <h2>Visão Geral</h2>
-        <span id="status-mqtt">Atualizado agora</span>
+        <span class="conn-status" id="status-mqtt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M2 8.8a15 15 0 0 1 20 0"/><path d="M5.5 12.5a10 10 0 0 1 13 0"/><path d="M9 16.2a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg>
+          <span id="status-text">Desconectado</span>
+        </span>
       </div>
 
       <div class="grid-metrics">
-        <!-- METRICA UMIDADE (REAL-TIME) -->
+        <!-- UMIDADE (TEMPO REAL) -->
         <div class="metric-card">
-          <div class="metric-title">
-            💧 Umidade do Solo
-          </div>
+          <div class="metric-title">💧 Umidade do Solo</div>
           <div class="metric-value"><span id="val-umidade">--</span>%</div>
-          <div class="metric-subtitle" id="status-umidade">Aguardando...</div>
+          <div class="progress"><div class="progress-fill" id="umidade-bar"></div></div>
+          <div class="metric-subtitle" id="faixa-ideal">Faixa ideal: --</div>
         </div>
 
-        <!-- METRICA IRRIGAÇÃO -->
+        <!-- IRRIGAÇÃO -->
         <div class="metric-card">
-          <div class="metric-title">
-            📅 Irrigação
-          </div>
-          <div class="metric-value" style="color: #333; font-size: 1.3rem; margin-top: 14px;">A cada 2 dias</div>
-          <div class="metric-subtitle">Programado</div>
+          <div class="metric-title">📅 Irrigação</div>
+          <div class="metric-value small" id="irrigacao-freq">--</div>
+          <div class="metric-subtitle" id="irrigacao-desc">--</div>
         </div>
       </div>
 
-      <!-- CARD SAÚDE DA PLANTA (DINÂMICO) -->
-      <div class="health-card">
-        <div class="health-info">
-          <div class="metric-title">🪴 Saúde da Planta</div>
+      <!-- ESTADO DA PLANTA (DINÂMICO) -->
+      <div class="wide-card">
+        <div>
+          <div class="metric-title">🌿 Estado da Planta</div>
           <h4 id="health-title">Calculando...</h4>
           <p id="health-desc">Aguardando dados do sensor...</p>
         </div>
-        <div class="health-icon" id="health-icon">🌿</div>
+        <div class="wide-icon" id="health-icon">🌿</div>
+      </div>
+
+      <!-- LUZ SOLAR -->
+      <div class="wide-card">
+        <div>
+          <div class="metric-title">☀️ Luz Solar</div>
+          <h4 id="luz-title">--</h4>
+          <p id="luz-desc">--</p>
+        </div>
+        <div class="wide-icon" id="luz-icon">🌤️</div>
+      </div>
+
+      <!-- DICA DA ESPÉCIE -->
+      <div class="info-box">
+        <i class="i">i</i>
+        <span><span id="dica-texto"></span> Essas são referências gerais e podem variar conforme o tipo de solo, vaso, clima e estágio de desenvolvimento da planta.<small class="credito" id="foto-credito"></small></span>
       </div>
     </div>
 
   </div>
 
-  <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
-  <div class="bottom-nav">
-    <a href="#" class="nav-item active">
-      <span class="nav-icon">🏠</span>
-      <span>Início</span>
-    </a>
-    <a href="#" class="nav-item">
-      <span class="nav-icon">🪴</span>
-      <span>Plantas</span>
-    </a>
-    <a href="#" class="nav-item">
-      <span class="nav-icon">💧</span>
-      <span>Irrigação</span>
-    </a>
-    <a href="#" class="nav-item">
-      <span class="nav-icon">👤</span>
-      <span>Perfil</span>
-    </a>
+  <!-- NAVEGAÇÃO INFERIOR -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-nav="inicio"><span class="nav-icon">🏠</span><span>Início</span></button>
+    <button class="nav-item" data-nav="plantas"><span class="nav-icon">🪴</span><span>Plantas</span></button>
+    <button class="nav-item" data-nav="irrigacao"><span class="nav-icon">💧</span><span>Irrigação</span></button>
+    <button class="nav-item" data-nav="perfil"><span class="nav-icon">👤</span><span>Perfil</span></button>
+  </nav>
+
+  <!-- SELETOR DE ESPÉCIES -->
+  <div class="sheet-overlay" id="sheet-overlay"></div>
+  <div class="sheet" id="species-sheet" role="dialog" aria-label="Escolher espécie">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div>
+        <h2>Escolha sua planta</h2>
+        <p>Os parâmetros do monitor se ajustam à espécie.</p>
+      </div>
+      <button class="sheet-close" id="sheet-close" aria-label="Fechar">✕</button>
+    </div>
+    <input class="search" id="species-search" type="text" placeholder="Buscar espécie...">
+    <div class="species-list" id="species-list"></div>
   </div>
 
   <!-- MODAL DE CONFIGURAÇÃO -->
@@ -393,33 +382,273 @@
   </div>
 
   <script>
+    /* =========================================================
+       CATÁLOGO DE ESPÉCIES
+       - min / max: faixa ideal de umidade do solo (%)
+       - img: URL direta de uma foto, OU
+       - commons: nome exato do arquivo no Wikimedia Commons
+         (a URL é montada automaticamente). Se a foto não
+         carregar, aparece o emoji no lugar.
+       - credito: autor da foto (exigido pela licença livre)
+       ========================================================= */
+    const ESPECIES = [
+      {
+        id: 'jiboia', nome: 'Jiboia', cientifico: 'Epipremnum aureum', emoji: '🌿', credito: 'Unsplash',
+        img: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=300&q=80',
+        desc: 'Resistente e pendente, ótima para iniciantes e ambientes internos.',
+        min: 40, max: 60, irrigacao: 'A cada 4–7 dias',
+        luz: 'Luz indireta', luzDesc: 'Prefere claridade sem sol direto; tolera meia-sombra.', luzIcon: '🌤️',
+        saudavel: 'Folhas firmes, brilhantes e sem amarelados.',
+        dica: 'A jiboia gosta de solo levemente úmido, nunca encharcado.'
+      },
+      {
+        id: 'alecrim', nome: 'Alecrim', cientifico: 'Rosmarinus officinalis', emoji: '🌿', commons: 'Rosmarinus officinalis133095382.jpg', credito: 'THOR',
+        desc: 'Aromático e versátil, pode ser cultivado em vasos e traz um toque especial à sua casa.',
+        min: 30, max: 50, irrigacao: 'A cada 7–14 dias',
+        luz: 'Sol pleno ou meia-sombra', luzDesc: 'Precisa de pelo menos 4–6 horas de luz solar por dia.', luzIcon: '☀️',
+        saudavel: 'Ramos firmes, folhas verdes e perfumadas.',
+        dica: 'O alecrim tolera seca e sofre com excesso de água: prefere solo bem drenado, ambiente arejado e clima ameno.'
+      },
+      {
+        id: 'lirio-da-paz', nome: 'Lírio-da-paz', cientifico: 'Spathiphyllum wallisii', emoji: '🤍', commons: 'Peace lily - 2.jpg', credito: 'W.carter',
+        desc: 'Elegante e de flores brancas, ideal para ambientes internos.',
+        min: 40, max: 60, irrigacao: 'A cada 4–7 dias',
+        luz: 'Meia-sombra', luzDesc: 'Luz indireta e difusa; o sol direto queima as folhas.', luzIcon: '🌥️',
+        saudavel: 'Folhas firmes, verdes e com flores.',
+        dica: 'Quando falta água, o lírio-da-paz murcha as folhas, mas se recupera rápido após a rega.'
+      },
+      {
+        id: 'tomateiro', nome: 'Tomateiro', cientifico: 'Solanum lycopersicum', emoji: '🍅', commons: 'Tomato plant.jpg', credito: 'Fyrra',
+        desc: 'Produtivo e saboroso, precisa de sol e regas frequentes.',
+        min: 40, max: 60, irrigacao: 'A cada 1–2 dias',
+        luz: 'Sol pleno', luzDesc: 'Precisa de 6–8 horas de sol direto por dia.', luzIcon: '☀️',
+        saudavel: 'Folhas firmes, cor vibrante e bom desenvolvimento dos frutos.',
+        dica: 'Em vaso, o tomateiro seca rápido e pode precisar de rega diária no calor; regas regulares evitam rachaduras nos frutos.'
+      },
+      {
+        id: 'manjericao', nome: 'Manjericão', cientifico: 'Ocimum basilicum', emoji: '🌱', commons: 'Basil-Basilico-Ocimum basilicum-albahaca.jpg', credito: 'Castielli',
+        desc: 'Erva aromática essencial na cozinha, cresce rápido em vasos.',
+        min: 45, max: 65, irrigacao: 'A cada 1–3 dias',
+        luz: 'Sol pleno', luzDesc: 'Pelo menos 4–6 horas de sol direto por dia.', luzIcon: '☀️',
+        saudavel: 'Folhas verdes, tenras e aromáticas.',
+        dica: 'Retire as flores para estimular novas folhas e mantenha o solo sempre levemente úmido.'
+      },
+      {
+        id: 'suculenta', nome: 'Suculenta', cientifico: 'Echeveria spp.', emoji: '🪷', commons: 'Echeveria \'Perle Von Nuremburg\' Plant 3008px.jpg', credito: 'Derek Ramsey',
+        desc: 'Compacta e decorativa, armazena água nas folhas.',
+        min: 15, max: 35, irrigacao: 'A cada 14–30 dias',
+        luz: 'Sol pleno', luzDesc: 'Gosta de bastante luz; pelo menos 4 horas de sol por dia.', luzIcon: '☀️',
+        saudavel: 'Folhas firmes, carnudas e rosetas compactas.',
+        dica: 'Deixe o solo secar completamente entre as regas — excesso de água é o maior risco.'
+      },
+      {
+        id: 'samambaia', nome: 'Samambaia', cientifico: 'Nephrolepis exaltata', emoji: '🌿', commons: 'Boston Fern (Nephrolepis exaltata).jpg', credito: 'Mokkie',
+        desc: 'Volumosa e cheia de vida, adora umidade.',
+        min: 55, max: 75, irrigacao: 'A cada 2–4 dias',
+        luz: 'Meia-sombra', luzDesc: 'Luz indireta; evite sol forte da tarde.', luzIcon: '🌥️',
+        saudavel: 'Frondes verdes, cheias e sem pontas secas.',
+        dica: 'A samambaia aprecia ar úmido — borrifar água nas folhas em dias secos ajuda.'
+      },
+      {
+        id: 'costela-de-adao', nome: 'Costela-de-adão', cientifico: 'Monstera deliciosa', emoji: '🍃', commons: 'Monstera deliciosa3.jpg', credito: 'Raul654',
+        desc: 'Folhas grandes e recortadas, a estrela das plantas de interior.',
+        min: 40, max: 60, irrigacao: 'A cada 7–14 dias',
+        luz: 'Luz indireta', luzDesc: 'Ambiente bem iluminado, sem sol direto nas folhas.', luzIcon: '🌤️',
+        saudavel: 'Folhas grandes, firmes e com recortes bem formados.',
+        dica: 'Regue quando os primeiros centímetros do solo estiverem secos.'
+      }
+    ];
+
+    let especieAtual = ESPECIES.find(e => e.id === localStorage.getItem('especie_id')) || ESPECIES[0];
+    let ultimaUmidade = null;
+
     let client = null;
     const feedName = 'umidade';
     const host = 'wss://io.adafruit.com:443';
 
     // Elementos do DOM
-    const statusEl = document.getElementById('status-mqtt');
-    const umidadeEl = document.getElementById('val-umidade');
-    const statusUmidadeEl = document.getElementById('status-umidade');
-    const greetingName = document.getElementById('greeting-name');
-    
-    // Elementos da Saúde da Planta
-    const healthTitle = document.getElementById('health-title');
-    const healthDesc = document.getElementById('health-desc');
-    const healthIcon = document.getElementById('health-icon');
-    const badgePlanta = document.getElementById('badge-planta');
-    const badgeText = document.getElementById('badge-text');
-    const badgeIcon = document.getElementById('badge-icon');
+    const $ = id => document.getElementById(id);
+    const statusEl = $('status-mqtt');
+    const statusText = $('status-text');
+    const umidadeEl = $('val-umidade');
+    const umidadeBar = $('umidade-bar');
+    const greetingName = $('greeting-name');
 
-    // Elementos do Modal
-    const modalEl = document.getElementById('modal-config');
-    const inputName = document.getElementById('input-name');
-    const inputUsername = document.getElementById('input-username');
-    const inputKey = document.getElementById('input-key');
-    const btnSalvar = document.getElementById('btn-salvar-config');
-    const btnOpenConfig = document.getElementById('open-config');
+    const healthTitle = $('health-title');
+    const healthDesc = $('health-desc');
+    const healthIcon = $('health-icon');
+    const badgePlanta = $('badge-planta');
+    const badgeText = $('badge-text');
+    const badgeIcon = $('badge-icon');
 
-    btnOpenConfig.addEventListener('click', () => abrirModal());
+    const modalEl = $('modal-config');
+    const inputName = $('input-name');
+    const inputUsername = $('input-username');
+    const inputKey = $('input-key');
+
+    /* ---------- MINIATURA (foto com fallback para emoji) ---------- */
+    function urlFoto(especie) {
+      if (especie.img) return especie.img;
+      if (especie.commons) {
+        return 'https://commons.wikimedia.org/wiki/Special:FilePath/' +
+          encodeURIComponent(especie.commons.replace(/ /g, '_')) + '?width=300';
+      }
+      return '';
+    }
+
+    function montarMiniatura(container, especie) {
+      container.innerHTML = '';
+      container.textContent = especie.emoji;
+      const src = urlFoto(especie);
+      if (src) {
+        const img = new Image();
+        img.alt = especie.nome;
+        img.onload = () => { container.textContent = ''; container.appendChild(img); };
+        img.src = src;
+      }
+    }
+
+    /* ---------- APLICA A ESPÉCIE NA TELA ---------- */
+    function aplicarEspecie(especie) {
+      especieAtual = especie;
+      try { localStorage.setItem('especie_id', especie.id); } catch (e) {}
+
+      montarMiniatura($('plant-thumb'), especie);
+      $('plant-name').innerText = especie.nome;
+      $('plant-scientific').innerText = especie.cientifico;
+      $('plant-desc').innerText = especie.desc;
+
+      $('faixa-ideal').innerText = `Faixa ideal: ${especie.min}–${especie.max}%`;
+      $('irrigacao-freq').innerText = especie.irrigacao;
+      $('irrigacao-desc').innerText = `Regue quando a umidade estiver abaixo de ${especie.min}%.`;
+
+      $('luz-title').innerText = especie.luz;
+      $('luz-desc').innerText = especie.luzDesc;
+      $('luz-icon').innerText = especie.luzIcon;
+
+      $('foto-credito').innerText = especie.credito
+        ? (especie.commons ? `Foto: ${especie.credito} / Wikimedia Commons` : `Foto: ${especie.credito}`)
+        : '';
+      $('dica-texto').innerText = especie.dica + ` A umidade ideal do solo é entre ${especie.min}% e ${especie.max}%.`;
+
+      if (ultimaUmidade !== null) {
+        atualizarSaudeDaPlanta(ultimaUmidade);
+      } else {
+        healthTitle.innerText = 'Aguardando';
+        healthTitle.style.color = '#777';
+        healthDesc.innerText = 'Aguardando dados do sensor...';
+        healthIcon.innerText = especie.emoji;
+      }
+    }
+
+    /* ---------- SAÚDE BASEADA NA FAIXA DA ESPÉCIE ---------- */
+    function definirEstado(cor, titulo, desc, icone, badgeTxt, badgeIco, badgeBg, badgeCor) {
+      healthTitle.innerText = titulo;
+      healthTitle.style.color = cor;
+      healthDesc.innerText = desc;
+      healthIcon.innerText = icone;
+      badgeText.innerText = badgeTxt;
+      badgeIcon.innerText = badgeIco;
+      badgePlanta.style.backgroundColor = badgeBg;
+      badgePlanta.style.color = badgeCor;
+      umidadeBar.style.background = cor;
+    }
+
+    function atualizarSaudeDaPlanta(val) {
+      const { min, max } = especieAtual;
+      umidadeBar.style.width = Math.max(0, Math.min(100, val)) + '%';
+
+      if (val < min - 15) {
+        definirEstado('#d32f2f', 'Crítica', 'Solo muito seco! Regue imediatamente.', '🥀',
+          'Precisa de Água', '⚠️', '#fde8e8', '#9c1c1c');
+      } else if (val < min) {
+        definirEstado('#e67e22', 'Atenção', 'Umidade abaixo do ideal. Considere irrigar em breve.', '🍂',
+          'Umidade Baixa', '🍂', '#fef5e7', '#b7950b');
+      } else if (val <= max) {
+        definirEstado('#2e7d32', 'Saudável', especieAtual.saudavel + ' Sua planta está bem!', '🌿',
+          'Saudável', '🍃', '#d4e8d4', '#2b5c2b');
+      } else if (val <= max + 15) {
+        definirEstado('#0288d1', 'Bem Hidratada', 'Solo acima do ideal. Não precisa regar agora.', '💧',
+          'Hidratada', '💧', '#e1f5fe', '#0277bd');
+      } else {
+        definirEstado('#7b1fa2', 'Excesso de Água', 'Solo muito molhado. Risco de apodrecer as raízes.', '🌊',
+          'Excesso de Água', '🌊', '#f3e5f5', '#4a148c');
+      }
+    }
+
+    /* ---------- SELETOR DE ESPÉCIES ---------- */
+    const sheet = $('species-sheet');
+    const sheetOverlay = $('sheet-overlay');
+    const listaEl = $('species-list');
+    const buscaEl = $('species-search');
+
+    function renderLista(filtro = '') {
+      const termo = filtro.trim().toLowerCase();
+      const itens = ESPECIES.filter(e =>
+        e.nome.toLowerCase().includes(termo) || e.cientifico.toLowerCase().includes(termo));
+
+      listaEl.innerHTML = '';
+      if (!itens.length) {
+        listaEl.innerHTML = '<p class="empty">Nenhuma espécie encontrada.</p>';
+        return;
+      }
+
+      itens.forEach(e => {
+        const btn = document.createElement('button');
+        btn.className = 'species-item' + (e.id === especieAtual.id ? ' selected' : '');
+        btn.innerHTML = `
+          <div class="plant-thumb"></div>
+          <div class="meta">
+            <strong>${e.nome}</strong>
+            <em>${e.cientifico}</em>
+            <div class="chips">
+              <span class="chip">💧 ${e.min}–${e.max}%</span>
+              <span class="chip">📅 ${e.irrigacao.replace('A cada ', '')}</span>
+            </div>
+          </div>
+          <span class="check">✓</span>`;
+        montarMiniatura(btn.querySelector('.plant-thumb'), e);
+        btn.addEventListener('click', () => {
+          aplicarEspecie(e);
+          fecharSeletor();
+        });
+        listaEl.appendChild(btn);
+      });
+    }
+
+    function marcarNav(nome) {
+      document.querySelectorAll('.nav-item').forEach(n =>
+        n.classList.toggle('active', n.dataset.nav === nome));
+    }
+
+    function abrirSeletor() {
+      buscaEl.value = '';
+      renderLista();
+      sheet.classList.add('active');
+      sheetOverlay.classList.add('active');
+      marcarNav('plantas');
+    }
+
+    function fecharSeletor() {
+      sheet.classList.remove('active');
+      sheetOverlay.classList.remove('active');
+      marcarNav('inicio');
+    }
+
+    $('plant-card').addEventListener('click', abrirSeletor);
+    $('sheet-close').addEventListener('click', fecharSeletor);
+    sheetOverlay.addEventListener('click', fecharSeletor);
+    buscaEl.addEventListener('input', () => renderLista(buscaEl.value));
+    document.addEventListener('keydown', ev => { if (ev.key === 'Escape') fecharSeletor(); });
+
+    document.querySelectorAll('.nav-item').forEach(n => n.addEventListener('click', () => {
+      if (n.dataset.nav === 'plantas') abrirSeletor();
+      else if (n.dataset.nav === 'perfil') abrirModal();
+      else { fecharSeletor(); marcarNav(n.dataset.nav); }
+    }));
+
+    /* ---------- MODAL DE CONFIGURAÇÃO ---------- */
+    $('open-config').addEventListener('click', () => abrirModal());
 
     function abrirModal() {
       inputName.value = localStorage.getItem('aio_user_name') || 'Carlos';
@@ -430,9 +659,10 @@
 
     function fecharModal() {
       modalEl.classList.remove('active');
+      marcarNav('inicio');
     }
 
-    btnSalvar.addEventListener('click', () => {
+    $('btn-salvar-config').addEventListener('click', () => {
       const name = inputName.value.trim() || 'Usuário';
       const u = inputUsername.value.trim();
       const k = inputKey.value.trim();
@@ -441,7 +671,6 @@
         localStorage.setItem('aio_user_name', name);
         localStorage.setItem('aio_username', u);
         localStorage.setItem('aio_key', k);
-        
         greetingName.innerText = name;
         fecharModal();
         conectarMQTT(u, k);
@@ -450,98 +679,25 @@
       }
     });
 
-    // Função que atualiza a saúde da planta com base na umidade
-    function atualizarSaudeDaPlanta(val) {
-      if (val < 20) {
-        statusUmidadeEl.innerText = 'Muito Seco';
-        statusUmidadeEl.style.color = '#d32f2f';
-
-        healthTitle.innerText = 'Crítica';
-        healthTitle.style.color = '#d32f2f';
-        healthDesc.innerText = 'Solo muito seco! Regue imediatamente.';
-        healthIcon.innerText = '🥀';
-
-        badgeText.innerText = 'Precisa de Água';
-        badgeIcon.innerText = '⚠️';
-        badgePlanta.style.backgroundColor = '#fde8e8';
-        badgePlanta.style.color = '#9c1c1c';
-
-      } else if (val < 35) {
-        statusUmidadeEl.innerText = 'Seco';
-        statusUmidadeEl.style.color = '#e67e22';
-
-        healthTitle.innerText = 'Atenção';
-        healthTitle.style.color = '#e67e22';
-        healthDesc.innerText = 'Umidade baixa. Considere irrigar em breve.';
-        healthIcon.innerText = '🍂';
-
-        badgeText.innerText = 'Umidade Baixa';
-        badgeIcon.innerText = '🍂';
-        badgePlanta.style.backgroundColor = '#fef5e7';
-        badgePlanta.style.color = '#b7950b';
-
-      } else if (val <= 70) {
-        statusUmidadeEl.innerText = 'Ideal';
-        statusUmidadeEl.style.color = '#2e7d32';
-
-        healthTitle.innerText = 'Ótima';
-        healthTitle.style.color = '#2e7d32';
-        healthDesc.innerText = 'Planta saudável e bem hidratada!';
-        healthIcon.innerText = '🌿';
-
-        badgeText.innerText = 'Saudável';
-        badgeIcon.innerText = '🍃';
-        badgePlanta.style.backgroundColor = '#d4e8d4';
-        badgePlanta.style.color = '#2b5c2b';
-
-      } else if (val <= 85) {
-        statusUmidadeEl.innerText = 'Úmido';
-        statusUmidadeEl.style.color = '#0288d1';
-
-        healthTitle.innerText = 'Boa';
-        healthTitle.style.color = '#0288d1';
-        healthDesc.innerText = 'Solo bem hidratado. Não precisa regar.';
-        healthIcon.innerText = '💧';
-
-        badgeText.innerText = 'Hidratada';
-        badgeIcon.innerText = '💧';
-        badgePlanta.style.backgroundColor = '#e1f5fe';
-        badgePlanta.style.color = '#0277bd';
-
-      } else {
-        statusUmidadeEl.innerText = 'Encharcado';
-        statusUmidadeEl.style.color = '#7b1fa2';
-
-        healthTitle.innerText = 'Excesso de Água';
-        healthTitle.style.color = '#7b1fa2';
-        healthDesc.innerText = 'Solo muito molhado. Risco de apodrecer raízes.';
-        healthIcon.innerText = '🌊';
-
-        badgeText.innerText = 'Excesso de Água';
-        badgeIcon.innerText = '🌊';
-        badgePlanta.style.backgroundColor = '#f3e5f5';
-        badgePlanta.style.color = '#4a148c';
-      }
+    /* ---------- MQTT (ADAFRUIT IO) ---------- */
+    function setStatus(texto, cor) {
+      statusText.innerText = texto;
+      statusEl.style.color = cor;
     }
 
     function conectarMQTT(username, key) {
       if (client) client.end(true);
-
-      statusEl.innerText = 'Conectando...';
+      setStatus('Conectando...', '#777');
 
       const topic = `${username}/feeds/${feedName}`;
-      const options = {
+      client = mqtt.connect(host, {
         username: username,
         password: key,
         clientId: 'Web_Client_' + Math.random().toString(16).substring(2, 10)
-      };
-
-      client = mqtt.connect(host, options);
+      });
 
       client.on('connect', () => {
-        statusEl.innerText = 'Online';
-        statusEl.style.color = '#2e7d32';
-
+        setStatus('Online', '#2e7d32');
         client.subscribe(topic, (err) => {
           if (!err) console.log(`Inscrito em: ${topic}`);
         });
@@ -549,23 +705,22 @@
 
       client.on('message', (t, message) => {
         const val = parseInt(message.toString());
+        if (isNaN(val)) return;
+        ultimaUmidade = val;
         umidadeEl.innerText = val;
         atualizarSaudeDaPlanta(val);
       });
 
-      client.on('error', () => {
-        statusEl.innerText = 'Erro de Conexão';
-        statusEl.style.color = '#d32f2f';
-      });
+      client.on('error', () => setStatus('Erro de Conexão', '#d32f2f'));
+      client.on('offline', () => setStatus('Offline', '#d32f2f'));
     }
 
-    // Inicialização da Página
-    const savedName = localStorage.getItem('aio_user_name') || 'Carlos';
-    greetingName.innerText = savedName;
+    /* ---------- INICIALIZAÇÃO ---------- */
+    greetingName.innerText = localStorage.getItem('aio_user_name') || 'Carlos';
+    aplicarEspecie(especieAtual);
 
     const savedUsername = localStorage.getItem('aio_username');
     const savedKey = localStorage.getItem('aio_key');
-
     if (savedUsername && savedKey) {
       conectarMQTT(savedUsername, savedKey);
     } else {
